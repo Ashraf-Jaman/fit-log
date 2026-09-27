@@ -3,14 +3,98 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 
 import brandLogo from "@/assets/images/brand-logo.png";
 
 const Navbar = () => {
   const pathname = usePathname();
 
-  const isWorkoutActive = pathname === "/";
-  const isMyPlanActive = pathname === "/my-plan";
+  const [planCount, setPlanCount] =
+    useState(0);
+
+  const [savedCount, setSavedCount] =
+    useState(0);
+
+  /* ================= LOAD COUNTERS ================= */
+
+  const updateCounters = () => {
+    try {
+      const plan =
+        localStorage.getItem("todayPlan");
+
+      const saved =
+        localStorage.getItem(
+          "savedExercises"
+        );
+
+      const parsedPlan = plan
+        ? JSON.parse(plan)
+        : [];
+
+      const parsedSaved = saved
+        ? JSON.parse(saved)
+        : [];
+
+      setPlanCount(
+        Array.isArray(parsedPlan)
+          ? parsedPlan.length
+          : 0
+      );
+
+      setSavedCount(
+        Array.isArray(parsedSaved)
+          ? parsedSaved.length
+          : 0
+      );
+    } catch {
+      setPlanCount(0);
+      setSavedCount(0);
+    }
+  };
+
+  useEffect(() => {
+    updateCounters();
+
+    const handleStorageUpdate = () => {
+      updateCounters();
+    };
+
+    const handleStorage = () => {
+      updateCounters();
+    };
+
+    window.addEventListener(
+      "fitlog-storage-update",
+      handleStorageUpdate
+    );
+
+    window.addEventListener(
+      "storage",
+      handleStorage
+    );
+
+    return () => {
+      window.removeEventListener(
+        "fitlog-storage-update",
+        handleStorageUpdate
+      );
+
+      window.removeEventListener(
+        "storage",
+        handleStorage
+      );
+    };
+  }, []);
+
+  const isWorkoutActive =
+    pathname === "/" ||
+    pathname.startsWith("/workouts");
+
+  const isMyPlanActive =
+    pathname === "/my-plan";
+
+  /* ================= WORKOUT CLICK ================= */
 
   const handleWorkoutClick = (
     e: React.MouseEvent<HTMLAnchorElement>
@@ -18,7 +102,10 @@ const Navbar = () => {
     if (pathname === "/") {
       e.preventDefault();
 
-      const librarySection = document.getElementById("library");
+      const librarySection =
+        document.getElementById(
+          "library"
+        );
 
       if (librarySection) {
         librarySection.scrollIntoView({
@@ -30,7 +117,17 @@ const Navbar = () => {
   };
 
   return (
-    <header className="sticky top-0 z-50 border-b border-[#24262b] bg-[#0c0d0f]">
+    <header
+      className="
+        sticky
+        top-0
+        z-50
+        border-b
+        border-[#24262b]
+        bg-[#0c0d0f]/95
+        backdrop-blur-md
+      "
+    >
       <nav
         className="
           mx-auto
@@ -50,12 +147,17 @@ const Navbar = () => {
           xl:px-20
         "
       >
+
         {/* ================= LOGO ================= */}
+
         <div className="flex shrink-0 items-center">
-          <Link href="/" className="flex items-center">
+          <Link
+            href="/"
+            className="flex items-center"
+          >
             <Image
               src={brandLogo}
-              alt="Fitlog"
+              alt="FitLog"
               priority
               className="
                 h-auto
@@ -68,7 +170,8 @@ const Navbar = () => {
           </Link>
         </div>
 
-        {/* ================= DESKTOP CENTER NAV ================= */}
+        {/* ================= DESKTOP NAV ================= */}
+
         <div
           className="
             absolute
@@ -81,7 +184,6 @@ const Navbar = () => {
             md:gap-2
           "
         >
-          {/* Workouts */}
           <Link
             href="/#library"
             onClick={handleWorkoutClick}
@@ -92,7 +194,6 @@ const Navbar = () => {
               text-sm
               font-medium
               transition-all
-              duration-200
               md:px-6
               md:py-2.5
               md:text-[15px]
@@ -106,7 +207,6 @@ const Navbar = () => {
             Workouts
           </Link>
 
-          {/* My Plan */}
           <Link
             href="/my-plan"
             className={`
@@ -116,7 +216,6 @@ const Navbar = () => {
               text-sm
               font-medium
               transition-all
-              duration-200
               md:px-6
               md:py-2.5
               md:text-[15px]
@@ -131,7 +230,8 @@ const Navbar = () => {
           </Link>
         </div>
 
-        {/* ================= RIGHT ================= */}
+        {/* ================= COUNTERS ================= */}
+
         <div
           className="
             ml-auto
@@ -143,19 +243,17 @@ const Navbar = () => {
             lg:gap-9
           "
         >
-          {/* Plan */}
           <Link
             href="/my-plan"
             className="
               flex
               items-center
-              gap-1.5
+              gap-2
               text-xs
               font-medium
               text-[#85878d]
-              transition-colors
+              transition
               hover:text-white
-              sm:gap-2
               sm:text-sm
               md:text-[15px]
             "
@@ -165,37 +263,33 @@ const Navbar = () => {
             <span
               className="
                 flex
-                h-4
-                w-4
+                min-w-5
+                h-5
                 items-center
                 justify-center
                 rounded-full
                 bg-[#c6ff00]
-                text-[9px]
+                px-1.5
+                text-[10px]
                 font-bold
                 text-black
-                sm:h-5
-                sm:w-5
-                sm:text-[10px]
               "
             >
-              0
+              {planCount}
             </span>
           </Link>
 
-          {/* Saved */}
           <Link
             href="/my-plan"
             className="
               flex
               items-center
-              gap-1.5
+              gap-2
               text-xs
               font-medium
               text-[#85878d]
-              transition-colors
+              transition
               hover:text-white
-              sm:gap-2
               sm:text-sm
               md:text-[15px]
             "
@@ -205,26 +299,25 @@ const Navbar = () => {
             <span
               className="
                 flex
-                h-4
-                w-4
+                min-w-5
+                h-5
                 items-center
                 justify-center
                 rounded-full
                 border
                 border-[#34363b]
-                text-[9px]
+                px-1.5
+                text-[10px]
                 text-[#85878d]
-                sm:h-5
-                sm:w-5
-                sm:text-[10px]
               "
             >
-              0
+              {savedCount}
             </span>
           </Link>
         </div>
 
         {/* ================= MOBILE NAV ================= */}
+
         <div
           className="
             mt-3
@@ -239,7 +332,6 @@ const Navbar = () => {
             sm:hidden
           "
         >
-          {/* Workouts */}
           <Link
             href="/#library"
             onClick={handleWorkoutClick}
@@ -249,19 +341,16 @@ const Navbar = () => {
               py-2
               text-sm
               font-medium
-              transition-all
-              duration-200
               ${
                 isWorkoutActive
                   ? "bg-[#18220d] text-[#c6ff00]"
-                  : "text-[#85878d] hover:text-white"
+                  : "text-[#85878d]"
               }
             `}
           >
             Workouts
           </Link>
 
-          {/* My Plan */}
           <Link
             href="/my-plan"
             className={`
@@ -270,12 +359,10 @@ const Navbar = () => {
               py-2
               text-sm
               font-medium
-              transition-all
-              duration-200
               ${
                 isMyPlanActive
                   ? "bg-[#18220d] text-[#c6ff00]"
-                  : "text-[#85878d] hover:text-white"
+                  : "text-[#85878d]"
               }
             `}
           >
