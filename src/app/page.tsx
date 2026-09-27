@@ -1,9 +1,9 @@
-import Image from "next/image";
+import WorkoutHero from "@/components/homepage/WorkoutHero";
 
 export default function Home() {
   return (
     <div>
-        home
+        <WorkoutHero/>
     </div>
   );
 }
