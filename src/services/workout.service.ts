@@ -15,3 +15,19 @@ export const getWorkouts = async (): Promise<Workout[]> => {
 
   return response.json();
 };
+
+export const getWorkoutById = async (
+  id: string
+): Promise<Workout | null> => {
+  const response = await fetch(`${API_URL}/${id}`, {
+    next: {
+      revalidate: 60,
+    },
+  });
+
+  if (!response.ok) {
+    return null;
+  }
+
+  return response.json();
+};
