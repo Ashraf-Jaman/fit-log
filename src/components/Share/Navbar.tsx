@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+
 import brandLogo from "@/assets/images/brand-logo.png";
 
 const Navbar = () => {
@@ -11,8 +12,9 @@ const Navbar = () => {
   const isWorkoutActive = pathname === "/";
   const isMyPlanActive = pathname === "/my-plan";
 
-  const handleWorkoutClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    // Already on homepage
+  const handleWorkoutClick = (
+    e: React.MouseEvent<HTMLAnchorElement>
+  ) => {
     if (pathname === "/") {
       e.preventDefault();
 
@@ -33,20 +35,23 @@ const Navbar = () => {
         className="
           mx-auto
           flex
-          h-[72px]
           w-full
           max-w-[1600px]
+          flex-wrap
           items-center
           justify-between
-          px-5
+          px-4
+          py-3
+          sm:h-[72px]
+          sm:flex-nowrap
           sm:px-8
           md:px-12
           lg:px-16
-          xl:px-20  
+          xl:px-20
         "
       >
-        {/* ================= LEFT : LOGO ================= */}
-        <div className="flex min-w-0 items-center">
+        {/* ================= LOGO ================= */}
+        <div className="flex shrink-0 items-center">
           <Link href="/" className="flex items-center">
             <Image
               src={brandLogo}
@@ -54,15 +59,16 @@ const Navbar = () => {
               priority
               className="
                 h-auto
-                w-[90px]
-                sm:w-[100px]
-                md:w-[110px]
+                w-[78px]
+                sm:w-[90px]
+                md:w-[100px]
+                lg:w-[110px]
               "
             />
           </Link>
         </div>
 
-        {/* ================= CENTER : NAV ================= */}
+        {/* ================= DESKTOP CENTER NAV ================= */}
         <div
           className="
             absolute
@@ -70,8 +76,9 @@ const Navbar = () => {
             hidden
             -translate-x-1/2
             items-center
-            gap-2
+            gap-1
             sm:flex
+            md:gap-2
           "
         >
           {/* Workouts */}
@@ -80,13 +87,14 @@ const Navbar = () => {
             onClick={handleWorkoutClick}
             className={`
               rounded-full
-              px-5
-              py-2.5
+              px-4
+              py-2
               text-sm
               font-medium
               transition-all
               duration-200
               md:px-6
+              md:py-2.5
               md:text-[15px]
               ${
                 isWorkoutActive
@@ -103,13 +111,14 @@ const Navbar = () => {
             href="/my-plan"
             className={`
               rounded-full
-              px-5
-              py-2.5
+              px-4
+              py-2
               text-sm
               font-medium
               transition-all
               duration-200
               md:px-6
+              md:py-2.5
               md:text-[15px]
               ${
                 isMyPlanActive
@@ -123,19 +132,31 @@ const Navbar = () => {
         </div>
 
         {/* ================= RIGHT ================= */}
-        <div className="ml-auto flex items-center gap-5 sm:gap-7 md:gap-9">
+        <div
+          className="
+            ml-auto
+            flex
+            items-center
+            gap-3
+            sm:gap-5
+            md:gap-7
+            lg:gap-9
+          "
+        >
           {/* Plan */}
           <Link
             href="/my-plan"
             className="
               flex
               items-center
-              gap-2
-              text-sm
+              gap-1.5
+              text-xs
               font-medium
               text-[#85878d]
               transition-colors
               hover:text-white
+              sm:gap-2
+              sm:text-sm
               md:text-[15px]
             "
           >
@@ -144,15 +165,18 @@ const Navbar = () => {
             <span
               className="
                 flex
-                h-5
-                w-5
+                h-4
+                w-4
                 items-center
                 justify-center
                 rounded-full
                 bg-[#c6ff00]
-                text-[10px]
+                text-[9px]
                 font-bold
                 text-black
+                sm:h-5
+                sm:w-5
+                sm:text-[10px]
               "
             >
               0
@@ -165,12 +189,14 @@ const Navbar = () => {
             className="
               flex
               items-center
-              gap-2
-              text-sm
+              gap-1.5
+              text-xs
               font-medium
               text-[#85878d]
               transition-colors
               hover:text-white
+              sm:gap-2
+              sm:text-sm
               md:text-[15px]
             "
           >
@@ -179,15 +205,18 @@ const Navbar = () => {
             <span
               className="
                 flex
-                h-5
-                w-5
+                h-4
+                w-4
                 items-center
                 justify-center
                 rounded-full
                 border
                 border-[#34363b]
-                text-[10px]
+                text-[9px]
                 text-[#85878d]
+                sm:h-5
+                sm:w-5
+                sm:text-[10px]
               "
             >
               0
@@ -196,38 +225,57 @@ const Navbar = () => {
         </div>
 
         {/* ================= MOBILE NAV ================= */}
-        <div className="absolute left-1/2 mt-[74px] flex -translate-x-1/2 items-center gap-1 sm:hidden">
+        <div
+          className="
+            mt-3
+            flex
+            w-full
+            items-center
+            justify-center
+            gap-1
+            border-t
+            border-[#1d1f23]
+            pt-3
+            sm:hidden
+          "
+        >
+          {/* Workouts */}
           <Link
             href="/#library"
             onClick={handleWorkoutClick}
             className={`
               rounded-full
-              px-4
+              px-5
               py-2
               text-sm
               font-medium
+              transition-all
+              duration-200
               ${
                 isWorkoutActive
                   ? "bg-[#18220d] text-[#c6ff00]"
-                  : "text-[#85878d]"
+                  : "text-[#85878d] hover:text-white"
               }
             `}
           >
             Workouts
           </Link>
 
+          {/* My Plan */}
           <Link
             href="/my-plan"
             className={`
               rounded-full
-              px-4
+              px-5
               py-2
               text-sm
               font-medium
+              transition-all
+              duration-200
               ${
                 isMyPlanActive
                   ? "bg-[#18220d] text-[#c6ff00]"
-                  : "text-[#85878d]"
+                  : "text-[#85878d] hover:text-white"
               }
             `}
           >
